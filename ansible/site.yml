@@ -1,0 +1,6 @@
+---
+- name: Configure CYNA infrastructure
+  hosts: all
+  become: yes
+  roles:
+    - common

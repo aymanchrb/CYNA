@@ -1,2 +1,2 @@
-location = "westeurope"
+location = "Poland Central"
 prefix   = "cyna"

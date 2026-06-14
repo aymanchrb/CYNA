@@ -1,0 +1,119 @@
+---
+- name: PRA - Restauration des services critiques CYNA
+  hosts: all
+  become: yes
+  vars:
+    backup_dir: "/var/backups/cyna"
+    restore_date: "{{ ansible_date_time.date }}"
+
+  tasks:
+    - name: Vérification connectivité des serveurs
+      ping:
+
+    - name: Vérification espace disque disponible
+      shell: df -h / | tail -1 | awk '{print $5}' | sed 's/%//'
+      register: disk_usage
+      failed_when: disk_usage.stdout | int > 90
+
+- name: PRA - Restauration Nginx (DMZ)
+  hosts: dmz
+  become: yes
+  tasks:
+    - name: Arrêt Nginx
+      service:
+        name: nginx
+        state: stopped
+
+    - name: Restauration configuration Nginx
+      copy:
+        src: "{{ backup_dir }}/nginx/"
+        dest: /etc/nginx/
+        backup: yes
+
+    - name: Validation configuration Nginx
+      command: nginx -t
+      register: nginx_test
+      failed_when: nginx_test.rc != 0
+
+    - name: Redémarrage Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Vérification Nginx opérationnel
+      uri:
+        url: "http://10.0.10.4"
+        status_code: [200, 301, 302]
+      register: nginx_check
+      retries: 3
+      delay: 10
+
+- name: PRA - Restauration PostgreSQL (SOC)
+  hosts: soc
+  become: yes
+  tasks:
+    - name: Arrêt PostgreSQL
+      service:
+        name: postgresql
+        state: stopped
+
+    - name: Restauration base de données
+      shell: |
+        pg_restore -U postgres -d cyna_db {{ backup_dir }}/postgresql/cyna_db_latest.dump
+      become_user: postgres
+      ignore_errors: yes
+
+    - name: Redémarrage PostgreSQL
+      service:
+        name: postgresql
+        state: started
+        enabled: yes
+
+    - name: Vérification PostgreSQL
+      shell: pg_isready -h 10.0.50.4 -p 5432
+      register: pg_check
+      retries: 3
+      delay: 10
+
+- name: PRA - Restauration Wazuh Manager (SOC)
+  hosts: soc
+  become: yes
+  tasks:
+    - name: Arrêt Wazuh Manager
+      service:
+        name: wazuh-manager
+        state: stopped
+
+    - name: Restauration configuration Wazuh
+      copy:
+        src: "{{ backup_dir }}/wazuh/"
+        dest: /var/ossec/etc/
+        backup: yes
+
+    - name: Redémarrage Wazuh Manager
+      service:
+        name: wazuh-manager
+        state: started
+        enabled: yes
+
+    - name: Vérification Wazuh actif
+      shell: systemctl is-active wazuh-manager
+      register: wazuh_status
+      failed_when: wazuh_status.stdout != "active"
+
+- name: PRA - Rapport de restauration
+  hosts: localhost
+  tasks:
+    - name: Génération rapport PRA
+      copy:
+        content: |
+          RAPPORT PRA CYNA
+          ================
+          Date : {{ ansible_date_time.iso8601 }}
+          Statut : Restauration terminée
+          Services restaurés :
+          - Nginx (DMZ)
+          - PostgreSQL (SOC)
+          - Wazuh Manager (SOC)
+        dest: "/tmp/rapport-pra-{{ ansible_date_time.date }}.txt"

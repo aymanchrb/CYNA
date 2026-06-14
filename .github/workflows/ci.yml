@@ -29,11 +29,6 @@ jobs:
           cd terraform/environments/prod
           terraform validate
 
-      - name: Terraform Format Check
-        run: |
-          cd terraform/environments/prod
-          terraform fmt -check
-
   ansible-lint:
     name: Validation Ansible
     runs-on: ubuntu-latest

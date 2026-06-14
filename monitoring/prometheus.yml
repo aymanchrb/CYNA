@@ -1,0 +1,38 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+rule_files:
+  - "alert_rules.yml"
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'cyna-webapp'
+    static_configs:
+      - targets: ['10.0.10.4:9100']
+    labels:
+      env: 'production'
+      zone: 'dmz'
+
+  - job_name: 'cyna-soc'
+    static_configs:
+      - targets: ['10.0.50.4:9100']
+    labels:
+      env: 'production'
+      zone: 'soc'
+
+  - job_name: 'cyna-identity'
+    static_configs:
+      - targets: ['10.0.80.4:9100']
+    labels:
+      env: 'production'
+      zone: 'identity'

@@ -1,0 +1,46 @@
+---
+- name: Installation Nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Démarrage et activation Nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Configuration Nginx reverse proxy CYNA
+  template:
+    src: cyna.conf.j2
+    dest: /etc/nginx/sites-available/cyna.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart nginx
+
+- name: Activation du site CYNA
+  file:
+    src: /etc/nginx/sites-available/cyna.conf
+    dest: /etc/nginx/sites-enabled/cyna.conf
+    state: link
+  notify: restart nginx
+
+- name: Suppression site default
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart nginx
+
+- name: Configuration headers sécurité
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    insertafter: 'http {'
+    line: "{{ item }}"
+  loop:
+    - '    add_header X-Frame-Options SAMEORIGIN;'
+    - '    add_header X-Content-Type-Options nosniff;'
+    - '    add_header X-XSS-Protection "1; mode=block";'
+    - '    server_tokens off;'
+  notify: restart nginx

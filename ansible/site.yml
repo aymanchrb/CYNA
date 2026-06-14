@@ -1,6 +1,25 @@
 ---
-- name: Configure CYNA infrastructure
+- name: Hardening commun tous les serveurs
   hosts: all
   become: yes
   roles:
     - common
+
+- name: Déploiement Nginx - DMZ
+  hosts: dmz
+  become: yes
+  roles:
+    - nginx
+
+- name: Déploiement PostgreSQL et Wazuh Manager - SOC
+  hosts: soc
+  become: yes
+  roles:
+    - postgresql
+    - wazuh-manager
+
+- name: Déploiement agents Wazuh - tous les serveurs
+  hosts: all
+  become: yes
+  roles:
+    - wazuh-agent

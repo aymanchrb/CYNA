@@ -1,0 +1,48 @@
+---
+- name: Mise à jour du système
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Désactivation des services inutiles
+  service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: no
+  loop:
+    - cups
+    - avahi-daemon
+  ignore_errors: yes
+
+- name: Configuration SSH sécurisée
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - { regexp: '^PermitRootLogin', line: 'PermitRootLogin no' }
+    - { regexp: '^PasswordAuthentication', line: 'PasswordAuthentication no' }
+    - { regexp: '^X11Forwarding', line: 'X11Forwarding no' }
+  notify: restart ssh
+
+- name: Installation fail2ban
+  apt:
+    name: fail2ban
+    state: present
+
+- name: Activation fail2ban
+  service:
+    name: fail2ban
+    state: started
+    enabled: yes
+
+- name: Configuration UFW - politique par défaut
+  ufw:
+    state: enabled
+    policy: deny
+
+- name: UFW - autoriser SSH
+  ufw:
+    rule: allow
+    port: '22'
+    proto: tcp

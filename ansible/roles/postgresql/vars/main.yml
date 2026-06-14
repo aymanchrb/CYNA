@@ -1,0 +1,2 @@
+---
+cyna_db_password: "{{ vault_cyna_db_password }}"

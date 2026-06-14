@@ -1,0 +1,42 @@
+---
+- name: Installation PostgreSQL
+  apt:
+    name:
+      - postgresql
+      - postgresql-contrib
+      - python3-psycopg2
+    state: present
+    update_cache: yes
+
+- name: Démarrage et activation PostgreSQL
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: Création base de données CYNA
+  postgresql_db:
+    name: cyna_db
+    state: present
+  become_user: postgres
+
+- name: Création utilisateur CYNA
+  postgresql_user:
+    name: cyna_user
+    password: "{{ cyna_db_password }}"
+    priv: "ALL/cyna_db.*:ALL"
+    state: present
+  become_user: postgres
+
+- name: Configuration écoute PostgreSQL
+  lineinfile:
+    path: /etc/postgresql/14/main/postgresql.conf
+    regexp: '^#listen_addresses'
+    line: "listen_addresses = '10.0.50.4'"
+  notify: restart postgresql
+
+- name: Configuration pg_hba.conf
+  lineinfile:
+    path: /etc/postgresql/14/main/pg_hba.conf
+    line: "host    cyna_db    cyna_user    10.0.10.0/24    md5"
+  notify: restart postgresql

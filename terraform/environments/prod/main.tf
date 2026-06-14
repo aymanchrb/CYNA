@@ -20,58 +20,58 @@ resource "azurerm_virtual_network" "cyna_vnet" {
 
 # Subnets
 resource "azurerm_subnet" "admin" {
-  name                 = "snet-cyna-admin-01"
-  resource_group_name  = azurerm_resource_group.cyna_rg.name
-  virtual_network_name = azurerm_virtual_network.cyna_vnet.name
-  address_prefixes     = ["10.0.40.0/24"]
+  name                            = "snet-cyna-admin-01"
+  resource_group_name             = azurerm_resource_group.cyna_rg.name
+  virtual_network_name            = azurerm_virtual_network.cyna_vnet.name
+  address_prefixes                = ["10.0.40.0/24"]
   default_outbound_access_enabled = false
 }
 
 resource "azurerm_subnet" "app" {
-  name                 = "snet-cyna-app-01"
-  resource_group_name  = azurerm_resource_group.cyna_rg.name
-  virtual_network_name = azurerm_virtual_network.cyna_vnet.name
-  address_prefixes     = ["10.0.20.0/24"]
+  name                            = "snet-cyna-app-01"
+  resource_group_name             = azurerm_resource_group.cyna_rg.name
+  virtual_network_name            = azurerm_virtual_network.cyna_vnet.name
+  address_prefixes                = ["10.0.20.0/24"]
   default_outbound_access_enabled = false
 }
 
 resource "azurerm_subnet" "db" {
-  name                 = "snet-cyna-db-01"
-  resource_group_name  = azurerm_resource_group.cyna_rg.name
-  virtual_network_name = azurerm_virtual_network.cyna_vnet.name
-  address_prefixes     = ["10.0.30.0/24"]
+  name                            = "snet-cyna-db-01"
+  resource_group_name             = azurerm_resource_group.cyna_rg.name
+  virtual_network_name            = azurerm_virtual_network.cyna_vnet.name
+  address_prefixes                = ["10.0.30.0/24"]
   default_outbound_access_enabled = false
 }
 
 resource "azurerm_subnet" "dmz" {
-  name                 = "snet-cyna-dmz-01"
-  resource_group_name  = azurerm_resource_group.cyna_rg.name
-  virtual_network_name = azurerm_virtual_network.cyna_vnet.name
-  address_prefixes     = ["10.0.10.0/24"]
+  name                            = "snet-cyna-dmz-01"
+  resource_group_name             = azurerm_resource_group.cyna_rg.name
+  virtual_network_name            = azurerm_virtual_network.cyna_vnet.name
+  address_prefixes                = ["10.0.10.0/24"]
   default_outbound_access_enabled = false
 }
 
 resource "azurerm_subnet" "endpoints" {
-  name                 = "snet-cyna-endpoints-01"
-  resource_group_name  = azurerm_resource_group.cyna_rg.name
-  virtual_network_name = azurerm_virtual_network.cyna_vnet.name
-  address_prefixes     = ["10.0.60.0/24"]
+  name                            = "snet-cyna-endpoints-01"
+  resource_group_name             = azurerm_resource_group.cyna_rg.name
+  virtual_network_name            = azurerm_virtual_network.cyna_vnet.name
+  address_prefixes                = ["10.0.60.0/24"]
   default_outbound_access_enabled = false
 }
 
 resource "azurerm_subnet" "identity" {
-  name                 = "snet-cyna-identity-01"
-  resource_group_name  = azurerm_resource_group.cyna_rg.name
-  virtual_network_name = azurerm_virtual_network.cyna_vnet.name
-  address_prefixes     = ["10.0.80.0/24"]
+  name                            = "snet-cyna-identity-01"
+  resource_group_name             = azurerm_resource_group.cyna_rg.name
+  virtual_network_name            = azurerm_virtual_network.cyna_vnet.name
+  address_prefixes                = ["10.0.80.0/24"]
   default_outbound_access_enabled = false
 }
 
 resource "azurerm_subnet" "soc" {
-  name                 = "snet-cyna-soc-01"
-  resource_group_name  = azurerm_resource_group.cyna_rg.name
-  virtual_network_name = azurerm_virtual_network.cyna_vnet.name
-  address_prefixes     = ["10.0.50.0/24"]
+  name                            = "snet-cyna-soc-01"
+  resource_group_name             = azurerm_resource_group.cyna_rg.name
+  virtual_network_name            = azurerm_virtual_network.cyna_vnet.name
+  address_prefixes                = ["10.0.50.0/24"]
   default_outbound_access_enabled = false
 }
 

@@ -1,0 +1,18 @@
+---
+# Variables globales CYNA
+wazuh_manager_ip: "10.0.50.4"
+wazuh_version: "4.7.0"
+
+db_host: "10.0.50.4"
+db_port: 5432
+db_name: "cyna_db"
+db_user: "cyna_user"
+
+nginx_http_port: 80
+nginx_https_port: 443
+app_backend_ip: "10.0.20.0"
+app_backend_port: 8080
+
+ntp_servers:
+  - "pool.ntp.org"
+  - "time.windows.com"
